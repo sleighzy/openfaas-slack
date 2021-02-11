@@ -1,0 +1,18 @@
+version: 1.0
+provider:
+  name: openfaas
+  gateway: https://gateway.mydomain.io
+functions:
+  slack:
+    lang: golang-http
+    handler: ./slack
+    image: openfaas/slack:latest
+    # skip_build: true
+    build_args:
+      GO111MODULE: on
+    environment:
+      SLACK_CHANNEL: general
+      SLACK_DEBUG: false
+      SLACK_LOGLEVEL: info
+    secrets:
+      - slack-api-token
