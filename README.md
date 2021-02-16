@@ -105,13 +105,21 @@ functions.
 This function uses additional Go libraries that need to be included as
 dependencies when building. See [GO - Dependencies] for options on including
 these dependencies. This repository uses the [Dep] dependency management tool
-for this.
+for this. Run the below command to install Dep using Homebrew.
 
 ```sh
 brew install dep
 ```
 
+Run the below commands to change into the directory containing the function
+handler and then initialize the dependencies. This will create/update the files
+that specify the dependencies the function imports and create the `vendor`
+subdirectory containing those libraries. This needs to be run from within the
+`slack` directory so that those files are copied to the `build/slack/function`
+directory during the build process.
+
 ```sh
+cd slack
 dep init
 ```
 

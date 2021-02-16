@@ -26,17 +26,13 @@
 
 
 [[constraint]]
-  name = "github.com/openfaas/templates-sdk"
-  version = "0.1.0"
+  name = "github.com/sirupsen/logrus"
+  version = "1.7.0"
 
 [[constraint]]
   name = "github.com/slack-go/slack"
-  version = "0.8.0"
+  version = "0.8.1"
 
 [prune]
   go-tests = true
   unused-packages = true
-
-[[constraint]]
-  name = "github.com/sirupsen/logrus"
-  version = "1.7.0"

@@ -10,14 +10,6 @@
   version = "v1.4.2"
 
 [[projects]]
-  digest = "1:4a9ee4441f62af8749741f46ef0ed4cb28e152c182aec9264a2350dc6950cfa4"
-  name = "github.com/openfaas/templates-sdk"
-  packages = ["go-http"]
-  pruneopts = "UT"
-  revision = "0ebf61253625e0592e900b1bd29a09814783f94f"
-  version = "0.1.0"
-
-[[projects]]
   digest = "1:9e1d37b58d17113ec3cb5608ac0382313c5b59470b94ed97d0976e69c7022314"
   name = "github.com/pkg/errors"
   packages = ["."]
@@ -34,7 +26,7 @@
   version = "v1.7.0"
 
 [[projects]]
-  digest = "1:f0dd8f419aa7fd443c2e6b6413d6d60aa357e01449d14886abcbb17fcc143091"
+  digest = "1:99773d30da0dedb2c6d1a9421734c5592d64ffab33b62e944e0c09af6a8d33e6"
   name = "github.com/slack-go/slack"
   packages = [
     ".",
@@ -45,8 +37,8 @@
     "slackutilsx",
   ]
   pruneopts = "UT"
-  revision = "483202e6be9328efbc6994beabb93e9a749408f6"
-  version = "v0.8.0"
+  revision = "841f33cde5240891bc7a43fed75a211f14371c16"
+  version = "v0.8.1"
 
 [[projects]]
   branch = "master"
@@ -64,7 +56,6 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
-    "github.com/openfaas/templates-sdk/go-http",
     "github.com/sirupsen/logrus",
     "github.com/slack-go/slack",
   ]
