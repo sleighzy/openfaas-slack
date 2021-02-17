@@ -73,4 +73,12 @@ jobs:
         uses: docker://openfaas/faas-cli:latest-root
         with:
           args: |
-            deploy -f slack.yml --gateway ${{ secrets.OPENFAAS_GATEWAY }} --tag sha
+            deploy \
+              --gateway ${{ secrets.OPENFAAS_GATEWAY }} \
+              --image ${{ secrets.DOCKER_REGISTRY }}/openfaas/slack:latest \
+              --tag sha \
+              --name slack \
+              --env SLACK_CHANNEL=${{ secrets.SLACK_CHANNEL }} \
+              --env SLACK_DEBUG=${{ secrets.SLACK_DEBUG }} \
+              --env SLACK_LOGLEVEL=${{ secrets.SLACK_LOGLEVEL }} \
+              --secret slack-api-token
