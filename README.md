@@ -94,41 +94,40 @@ Function created in folder: slack
 Stack file written: slack.yml
 ```
 
+### Golang Dependencies
+
+This function uses additional Go libraries that need to be included as
+dependencies when building. See [GO - Dependencies] for options on including
+these dependencies. This repository uses [Go Modules] for managing dependencies.
+
+The below commands were run to initialize the `go.mod` and `go.sum` files, and
+the contents of the `go.mod` file put in the `GO_REPLACE.txt` file to be used
+during the build. These commands need to be run from within the `slack`
+directory containing the function handler.
+
+```sh
+cd slack
+export GO111MODULE=on
+go mod init
+go get
+go mod tidy
+cat go.mod > GO_REPLACE.txt
+```
+
+When adding new libraries within your handler source code you will need to
+update your Go dependencies.
+
+```sh
+cd slack
+go mod tidy
+cat go.mod > GO_REPLACE.txt
+```
+
 ## Building the Function
 
 The OpenFaaS documentation and [Simple Serverless with Golang Functions and
 Microservices] provide instruction on how to develop and build OpenFaaS
 functions.
-
-### Golang Dependencies
-
-This function uses additional Go libraries that need to be included as
-dependencies when building. See [GO - Dependencies] for options on including
-these dependencies. This repository uses the [Dep] dependency management tool
-for this. Run the below command to install Dep using Homebrew.
-
-```sh
-brew install dep
-```
-
-Run the below commands to change into the directory containing the function
-handler and then initialize the dependencies. This will create/update the files
-that specify the dependencies the function imports and create the `vendor`
-subdirectory containing those libraries. This needs to be run from within the
-`slack` directory so that those files are copied to the `build/slack/function`
-directory during the build process.
-
-```sh
-cd slack
-dep init
-```
-
-I found that as my code already had the imports it automatically created the
-`Gopkg.toml` and `Gopkg.lock` files with those dependencies. The
-`dep ensure -add github.com/slack-go/slack` command for example returned an
-error saying this dependency had already been added. Running the command for
-imports that have not yet been added to the handler Go code succeeded without
-errors and updated the `Gopkg.toml` and `Gopkg.lock` files as expected.
 
 ### ARM64 Image Builds
 
@@ -141,6 +140,8 @@ command. The below command will create a new directory containing the
 faas-cli build --shrinkwrap -f slack.yml
 ```
 
+### Docker Buildx for multiple platforms
+
 The below commands should only need to be run once but will create a new Docker
 build context for using with [Docker Buildx] to create images for multiple
 platforms.
@@ -152,10 +153,16 @@ docker buildx inspect --bootstrap
 ```
 
 Run the below command to use Buildx to create an image that supports both amd64
-and arm64 architectures, and push it to the registry.
+and arm64 architectures, and push it to the registry. This sets the
+`GO111MODULE` build arg to `on` so that the `GO_REPLACE.txt` is used and the Go
+dependencies retrieved during the build process. Whilst the `GO111MODULE` entry
+can be added to the `slack.yml` file as per the OpenFaaS documentation this does
+not appear to be used when performing shrinkwrap builds, the argument must still
+be provided when running `docker buildx build`.
 
 ```sh
 $ docker buildx build \
+ --build-arg GO111MODULE=on \
  --push \
  --tag registry.mydomain.io/openfaas/slack:latest \
  --platform=linux/amd64,linux/arm64 \
@@ -208,10 +215,10 @@ faas-cli remove slack
 
 [arkade]: https://github.com/alexellis/arkade
 [chat:write]: https://api.slack.com/scopes/chat:write
-[dep]: https://github.com/golang/dep
 [docker buildx]:
   https://docs.docker.com/engine/reference/commandline/buildx_build/
 [go - dependencies]: https://docs.openfaas.com/cli/templates/#go-go-dependencies
+[go modules]: https://golang.org/ref/mod
 [httpie]: https://httpie.io/
 [openfaas]: https://www.openfaas.com/
 [openfaas deployment]: https://docs.openfaas.com/deployment/
