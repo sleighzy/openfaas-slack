@@ -34,6 +34,11 @@ jobs:
         with:
           args: build -f slack.yml --shrinkwrap
 
+      - name: Retrieve Go dependencies
+        run: |
+          cd build/slack
+          go mod vendor
+
       - name: Login to OpenFaaS Gateway
         uses: docker://openfaas/faas-cli:latest-root
         with:
