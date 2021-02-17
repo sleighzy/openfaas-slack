@@ -37,7 +37,7 @@ jobs:
       - name: Retrieve Go dependencies
         run: |
           cd build/slack
-          go mod vendor
+          sudo go mod vendor
 
       - name: Login to OpenFaaS Gateway
         uses: docker://openfaas/faas-cli:latest-root
