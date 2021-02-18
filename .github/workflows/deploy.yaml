@@ -67,7 +67,9 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           push: true
           labels: org.opencontainers.image.source=https://github.com/${{ github.repository_owner }}/openfaas-slack
-          tags: ${{ secrets.DOCKER_REGISTRY }}/openfaas/slack:latest-${{ steps.get_tag.outputs.GITHUB_SHA_SHORT }}
+          tags: |
+            ${{ secrets.DOCKER_REGISTRY }}/openfaas/slack:latest
+            ${{ secrets.DOCKER_REGISTRY }}/openfaas/slack:${{ steps.get_tag.outputs.GITHUB_SHA_SHORT }}
 
       - name: Deploy the function
         uses: docker://openfaas/faas-cli:latest-root
@@ -75,7 +77,7 @@ jobs:
           args: |
             deploy \
               --gateway ${{ secrets.OPENFAAS_GATEWAY }} \
-              --image ${{ secrets.DOCKER_REGISTRY }}/openfaas/slack:latest \
+              --image ${{ secrets.DOCKER_REGISTRY }}/openfaas/slack:${{ steps.get_tag.outputs.GITHUB_SHA_SHORT }} \
               --tag sha \
               --name slack \
               --env SLACK_CHANNEL=${{ secrets.SLACK_CHANNEL }} \
