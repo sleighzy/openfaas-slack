@@ -1,6 +1,7 @@
 package function
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -14,6 +15,13 @@ import (
 
 	log "github.com/sirupsen/logrus"
 )
+
+type Message struct {
+	Title string `json:"title"`
+	Body  struct {
+		Text string `json:"text"`
+	} `json:"body"`
+}
 
 // Handle a function invocation
 func Handle(req handler.Request) (handler.Response, error) {
@@ -62,10 +70,19 @@ func Handle(req handler.Request) (handler.Response, error) {
 
 	api := slack.New(slackAPIToken, slack.OptionDebug(debug))
 
-	message := string(req.Body)
-	msgText := slack.NewTextBlockObject("mrkdwn", message, false, false)
+	var message Message
+
+	err = json.Unmarshal(req.Body, &message)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	msgTitle := slack.NewTextBlockObject("plain_text", message.Title, false, false)
+	msgHeader := slack.NewHeaderBlock(msgTitle, slack.HeaderBlockOptionBlockID("header_block"))
+	msgText := slack.NewTextBlockObject("mrkdwn", message.Body.Text, false, false)
 	msgSection := slack.NewSectionBlock(msgText, nil, nil)
 	msg := slack.MsgOptionBlocks(
+		msgHeader,
 		msgSection,
 	)
 
@@ -78,7 +95,7 @@ func Handle(req handler.Request) (handler.Response, error) {
 	}
 
 	return handler.Response{
-		Body:       []byte(message),
+		Body:       []byte(req.Body),
 		StatusCode: http.StatusOK,
 	}, err
 }
