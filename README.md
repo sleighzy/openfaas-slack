@@ -106,12 +106,18 @@ during the build. These commands need to be run from within the `slack`
 directory containing the function handler.
 
 ```sh
-cd slack
-export GO111MODULE=on
-go mod init
-go get
-go mod tidy
-cat go.mod > GO_REPLACE.txt
+$ cd slack
+$ export GO111MODULE=on
+
+$ go mod init
+go: creating new go.mod: module openfaas/openfaas-slack/slack
+
+$ go get
+go: finding module for package github.com/openfaas/templates-sdk/go-http
+go: found github.com/openfaas/templates-sdk/go-http in github.com/openfaas/templates-sdk v0.0.0-20200723110415-a699ec277c12
+
+$ go mod tidy
+$ cat go.mod > GO_REPLACE.txt
 ```
 
 When adding new libraries within your handler source code you will need to
@@ -138,6 +144,14 @@ command. The below command will create a new directory containing the
 
 ```sh
 faas-cli build --shrinkwrap -f slack.yml
+```
+
+Run the below commands to change into the created build directory and add the
+libraries required by the handler function for building.
+
+```sh
+cd build/slack
+go mod vendor
 ```
 
 ### Docker Buildx for multiple platforms
@@ -204,7 +218,7 @@ Run the below command, using the awesome [HTTPie] command-line utility as a
 replacement for cURL, to send a message to the Slack channel.
 
 ```sh
-echo 'HTTPie is Awesome! :heart:' | http POST https://gateway.mydomain.io/function/slack
+echo '{ "title": "HTTPie", "body": { "text": "HTTPie is Awesome! :heart:" } }' | http POST https://gateway.mydomain.io/function/slack
 ```
 
 Run the below command to remove the function.
