@@ -100,10 +100,9 @@ This function uses additional Go libraries that need to be included as
 dependencies when building. See [GO - Dependencies] for options on including
 these dependencies. This repository uses [Go Modules] for managing dependencies.
 
-The below commands were run to initialize the `go.mod` and `go.sum` files, and
-the contents of the `go.mod` file put in the `GO_REPLACE.txt` file to be used
-during the build. These commands need to be run from within the `slack`
-directory containing the function handler.
+The below commands were run to initialize the `go.mod` and `go.sum` files. These
+commands need to be run from within the `slack` directory containing the
+function handler.
 
 ```sh
 $ cd slack
@@ -117,7 +116,6 @@ go: finding module for package github.com/openfaas/templates-sdk/go-http
 go: found github.com/openfaas/templates-sdk/go-http in github.com/openfaas/templates-sdk v0.0.0-20200723110415-a699ec277c12
 
 $ go mod tidy
-$ cat go.mod > GO_REPLACE.txt
 ```
 
 When adding new libraries within your handler source code you will need to
@@ -126,7 +124,6 @@ update your Go dependencies.
 ```sh
 cd slack
 go mod tidy
-cat go.mod > GO_REPLACE.txt
 ```
 
 ## Building the Function
@@ -146,14 +143,6 @@ command. The below command will create a new directory containing the
 faas-cli build --shrinkwrap -f slack.yml
 ```
 
-Run the below commands to change into the created build directory and add the
-libraries required by the handler function for building.
-
-```sh
-cd build/slack
-go mod vendor
-```
-
 ### Docker Buildx for multiple platforms
 
 The below commands should only need to be run once but will create a new Docker
@@ -168,7 +157,7 @@ docker buildx inspect --bootstrap
 
 Run the below command to use Buildx to create an image that supports both amd64
 and arm64 architectures, and push it to the registry. This sets the
-`GO111MODULE` build arg to `on` so that the `GO_REPLACE.txt` is used and the Go
+`GO111MODULE` build arg to `on` so that Go modules is used and the Go
 dependencies retrieved during the build process. Whilst the `GO111MODULE` entry
 can be added to the `slack.yml` file as per the OpenFaaS documentation this does
 not appear to be used when performing shrinkwrap builds, the argument must still
@@ -216,6 +205,11 @@ URL: https://gateway.mydomain.io/function/slack
 
 Run the below command, using the awesome [HTTPie] command-line utility as a
 replacement for cURL, to send a message to the Slack channel.
+
+**Note:** the Slack app must be added to the Slack channel, `general` based on
+the example above, before the command is run. If this is not done then you will
+get an error message stating
+"`Failed to send message to Slack. Error: not_in_channel`".
 
 ```sh
 echo '{ "title": "HTTPie", "body": { "text": "HTTPie is Awesome! :heart:" } }' | http POST https://gateway.mydomain.io/function/slack
