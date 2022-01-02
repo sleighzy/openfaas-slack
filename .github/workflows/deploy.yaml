@@ -34,11 +34,6 @@ jobs:
         with:
           args: build -f slack.yml --shrinkwrap
 
-      - name: Retrieve Go dependencies
-        run: |
-          cd build/slack
-          sudo go mod vendor
-
       - name: Login to Docker registry
         if: success()
         uses: docker/login-action@v1
